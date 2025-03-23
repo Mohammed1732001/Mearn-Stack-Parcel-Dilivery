@@ -57,5 +57,5 @@ const parcelSchema = new Schema({
 }, { timestamps: true })
 
 
-const parcelModel = model("user", parcelSchema)
+const parcelModel = model("parcel", parcelSchema)
 export default parcelModel
