@@ -7,7 +7,8 @@ import * as authController from "./controller/auth.js"
 
 router.get("/" ,authController.authModule )
 
-router.post("/" , authController.signUp) 
+router.post("/signUp" , authController.signUp) 
+router.post("/login" , authController.login) 
 
 
 

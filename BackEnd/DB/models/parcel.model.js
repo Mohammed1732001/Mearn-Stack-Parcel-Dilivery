@@ -32,7 +32,7 @@ const parcelSchema = new Schema({
         required: true
     },
     date: {
-        type: String,
+        type: Date,
         required: true
     },
     note: {
@@ -47,11 +47,11 @@ const parcelSchema = new Schema({
         default: 0
     },
     senderphone: {
-        type: Number,
+        type: String,
         required: true
     },
     recipientphone: {
-        type: Number,
+        type: String,
         required: true
     },
 }, { timestamps: true })

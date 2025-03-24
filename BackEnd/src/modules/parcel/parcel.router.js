@@ -1,14 +1,15 @@
 import { Router } from "express";
 const router = Router();
 import * as parcelController from "./controller/parcel.js"
+import { auth, authAdmin } from "../../middleWare/auth.middleWare.js";
 
 // add parcel
-router.post("/", parcelController.addParcel)
+router.post("/", auth,parcelController.addParcel)
 
 
 // get all parcel
 
-router.get("/", parcelController.getAllParcel)
+router.get("/",auth, authAdmin, parcelController.getAllParcel)
 
 
 

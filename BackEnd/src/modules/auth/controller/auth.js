@@ -1,7 +1,7 @@
 import userModel from "../../../../DB/models/user.model.js";
 import { compare, hash } from "../../../utils/hashAndCompare.js";
 
-
+import jwt from "jsonwebtoken"
 
 export const authModule = (req, res, next) => {
     res.json({ message: "hello from auth" })
@@ -42,6 +42,6 @@ export const login = async (req, res, next) => {
         return res.status(200).json({ message: "Done", token })
 
     } catch (error) {
-        return res.status(500).json({ message: "catch error", error })
+        return res.status(500).json({ message: "catch error", error:error.message })
     }
 }
