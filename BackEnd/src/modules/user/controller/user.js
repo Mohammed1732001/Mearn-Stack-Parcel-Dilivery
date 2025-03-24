@@ -1,3 +1,4 @@
+// import userModel from "../../../../DB/models/user.model.js"
 import userModel from "../../../../DB/models/user.model.js"
 
 // auth انا بقول اللي المفرزض اللي يشوف كل اليوزر الادمن فقط وبقول نعمل ال 
@@ -10,7 +11,7 @@ export const getAllUser = async (req, res, next) => {
         const user = await userModel.find().sort({ createdAt: -1 })
         return res.status(200).json({ message: "Done", user })
     } catch (error) {
-        return res.status(500).json({ message: "catch error", error })
+        return res.status(500).json({ message: "catch error", error: error.message })
     }
 }
 export const deleteUser = async (req, res, next) => {
