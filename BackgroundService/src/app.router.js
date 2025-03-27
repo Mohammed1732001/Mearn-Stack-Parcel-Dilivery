@@ -1,6 +1,8 @@
 import conectDB from "../DB/conniction.js"
 
 import corn from "node-cron"
+import sendWelcomeEmail from "../utils/EmailService/welcomEmail.js"
+
 
 
 
@@ -10,13 +12,13 @@ const initApp = (express, app) => {
 
     // task SCheduler
         const run = () => {
-        corn.schedule("* * *  * *", async () => {
+        corn.schedule("* * * * * *", async () => {
+            sendWelcomeEmail()
             console.log("running a task every minute");
-
         })
     }
 
-    run()
+    // run()
 
 
 
