@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router"
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom"
 import Home from "./pages/Home.jsx"
 import Parcels from "./pages/Parcels.jsx"
 import Parcel from "./pages/Parcel.jsx"
@@ -6,6 +6,7 @@ import Navbar from "./compnante/Navbar.jsx"
 import Menue from "./compnante/Menue.jsx"
 import Footer from "./compnante/Footer.jsx"
 import Users from "./pages/Users.jsx"
+import Login from "./pages/Login.jsx"
 function App() {
 
   const Layout = () => {
@@ -41,11 +42,13 @@ function App() {
         path: "/Parcel/:parcelId", element: <Parcel />
       },
       {
-        path: "/users", element: <Users />
+        path: "/Users", element: <Users />
       },
     ]
   },
-
+  {
+    path: "/Login", element: <Login />
+  }
 
   ])
 
