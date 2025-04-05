@@ -3,30 +3,31 @@ import { Link } from "react-router-dom";
 import { FaTrash } from "react-icons/fa"
 import { FiEdit } from "react-icons/fi";
 function Users() {
+
   const columns = [
     { field: "id", headerName: "ID", width: 50 },
     { field: "fullName", headerName: "Full Name", width: 100 },
     { field: "email", headerName: "Email", width: 200 },
-    { field: "age", headerName: "Age", type: "number", width: 80},
+    { field: "age", headerName: "Age", type: "number", width: 80 },
     { field: "address", headerName: "Address", width: 200 },
     {
       field: "edit", headerName: "Edit", width: 120,
       renderCell: (params) => {
         return (
-          <>
-            <button className='btn btn-primary'>Edit <FiEdit style={{ color: "white", marginLeft: "3px" }} /> </button>
-          </>
-        )
+          <button className='btn btn-primary'>
+            Edit <FiEdit style={{ color: "white", marginLeft: "3px" }} />
+          </button>
+        );
       }
     },
     {
       field: "delete", headerName: "Delete", width: 120,
       renderCell: (params) => {
         return (
-          <>
-            <button className='btn btn-danger'>Delete <FaTrash style={{ color: "white", marginLeft: "3px" }} /></button>
-          </>
-        )
+          <button className='btn btn-danger'>
+            Delete <FaTrash style={{ color: "white", marginLeft: "3px" }} />
+          </button>
+        );
       }
     },
   ];
@@ -43,20 +44,22 @@ function Users() {
     { id: 9, fullName: "Natasha Romanoff", email: "natasha.romanoff@example.com", age: 35, country: "Russia", address: "Unknown" },
   ];
   
-
-
   return (
-    <div className="m-2 p-3 " style={{ backgroundColor: "whitesmoke" }}>
+    <div className="container-fluid p-3" style={{ backgroundColor: "whitesmoke" }}>
       <div className="d-flex justify-content-between">
-        <h1 className="p-1 m-2" style={{ fontSize: "20px" }}> All Users </h1>
-        <button className="p-2 btn btn-dark m-2" >New User</button>
+        <h1 className="p-1 m-2" style={{ fontSize: "20px" }}>All Users</h1>
+  
+        <Link to="/NewUser">
+          <button className="p-2 btn btn-dark m-2">New User</button>
+        </Link>
       </div>
-
-
-      <DataGrid rows={rows} columns={columns} checkboxSelection />
-
+  
+      <div style={{ width: '100%' }}>
+        <DataGrid rows={rows} columns={columns} checkboxSelection />
+      </div>
     </div>
-  )
+  );
+  
 }
 
 export default Users

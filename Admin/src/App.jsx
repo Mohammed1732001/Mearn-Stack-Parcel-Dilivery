@@ -6,6 +6,8 @@ import Navbar from "./compnante/Navbar.jsx"
 import Menue from "./compnante/Menue.jsx"
 import Footer from "./compnante/Footer.jsx"
 import Users from "./pages/Users.jsx"
+import NewParcel from "./pages/NewParcel.jsx"
+import NewUser from "./pages/NewUser.jsx"
 import Login from "./pages/Login.jsx"
 function App() {
 
@@ -37,6 +39,12 @@ function App() {
       },
       {
         path: "/Parcels", element: <Parcels />
+      },
+      {
+        path: "/newparcel", element: <NewParcel />
+      },
+      {
+        path: "/newuser", element: <NewUser />
       },
       {
         path: "/Parcel/:parcelId", element: <Parcel />
