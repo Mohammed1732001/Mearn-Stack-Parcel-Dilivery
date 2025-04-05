@@ -4,7 +4,6 @@ import { FaTrash } from "react-icons/fa"
 import { FiEdit } from "react-icons/fi";
 function Parcels() {
 
-
   const columns = [
     { field: "id", headerName: "ID", width: 50 },
     { field: "senderName", headerName: "Sender Name", width: 150 },
@@ -16,24 +15,24 @@ function Parcels() {
       field: "edit", headerName: "Edit", width: 130,
       renderCell: (params) => {
         return (
-          <>
-            <button className='btn btn-primary'>Edit <FiEdit style={{ color: "white", marginLeft: "3px" }} /> </button>
-          </>
-        )
+          <button className='btn btn-primary'>
+            Edit <FiEdit style={{ color: "white", marginLeft: "3px" }} />
+          </button>
+        );
       }
     },
     {
       field: "delete", headerName: "Delete", width: 130,
       renderCell: (params) => {
         return (
-          <>
-            <button className='btn btn-danger'>Delete <FaTrash style={{ color: "white", marginLeft: "3px" }} /></button>
-          </>
-        )
+          <button className='btn btn-danger'>
+            Delete <FaTrash style={{ color: "white", marginLeft: "3px" }} />
+          </button>
+        );
       }
     },
   ];
-
+  
   const rows = [
     { id: 1, senderName: "John Doe", recipientName: "Jane Doe", from: "New York", to: "Los Angeles", weight: 2.5, cost: 15.0 },
     { id: 2, senderName: "Alice Brown", recipientName: "Mike Smith", from: "Chicago", to: "Houston", weight: 3.0, cost: 18.0 },
@@ -46,18 +45,24 @@ function Parcels() {
     { id: 9, senderName: "Natasha Romanoff", recipientName: "Clint Barton", from: "Moscow", to: "New York", weight: 2.9, cost: 16.0 },
     { id: 10, senderName: "Scott Lang", recipientName: "Hope Van Dyne", from: "San Francisco", to: "Atlanta", weight: 3.3, cost: 19.0 },
   ];
+  
   return (
-    <div className="m-2 p-3 " style={{ backgroundColor: "whitesmoke" }}>
+    <div className="container-fluid p-3" style={{ backgroundColor: "whitesmoke" }}>
       <div className="d-flex justify-content-between">
-        <h1 className="p-1 m-2" style={{ fontSize: "20px" }}> All Parcel </h1>
-        <button className="p-2 btn btn-dark m-2" >New Parcel</button>
+        <h1 className="p-1 m-2" style={{ fontSize: "20px" }}>All Parcels</h1>
+        <Link to="/NewParcel">
+          <button className="p-2 btn btn-dark m-2">New Parcel</button>
+        </Link>
       </div>
-
-
-      <DataGrid rows={rows} columns={columns} checkboxSelection />
-
+  
+      <div style={{ width: '100%' }}>
+        <DataGrid rows={rows} columns={columns} checkboxSelection />
+      </div>
     </div>
-  )
+  );
+  
+
+
 }
 
 export default Parcels
