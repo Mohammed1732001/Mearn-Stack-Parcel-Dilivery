@@ -12,7 +12,7 @@ function Login() {
           <input type="text" placeholder="Enter your email" className="d-flex items-center justify-center p-2 my-4 w-75 mx-auto" style={{ borderRadius: "5px", border: "none" }} />
           <input type="password" placeholder="Enter your password" className="d-flex items-center justify-center p-2 my-4 w-75 mx-auto" style={{ borderRadius: "5px", border: "none" }} />
           <div className="d-flex justify-content-center align-items-center">
-            <button className="btn btn-dark w-75 my-2 p-2 text-center mx-auto">Create</button>
+            <button className="btn btn-dark w-75 my-2 p-2 text-center mx-auto">Login</button>
           </div>
         </div>
       </div>
