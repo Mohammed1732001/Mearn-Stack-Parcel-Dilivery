@@ -2,7 +2,7 @@
 function NewUser() {
   return (
     <div className="container-fluid " style={{ backgroundColor: "whitesmoke" }}>
-      <h1 className="p-1 m-2" style={{ fontSize: "20px" }}>New Parcel</h1>
+      <h1 className="p-1 m-2" style={{ fontSize: "20px" }}>New User</h1>
 
       <div className="d-flex flex-column my-2">
         <label htmlFor="">Full Name</label>
