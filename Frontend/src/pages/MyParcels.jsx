@@ -29,9 +29,11 @@ const MyParcels = () => {
         }}
       >
         <ul className="list-unstyled m-0">
+          <Link to="/allparcels">
           <li className="my-2 element text-center p-2 rounded" style={{ cursor: "pointer", transition: "background-color 0.3s ease, color 0.3s ease" }}>
             All Parcels
           </li>
+          </Link>
           <li className="my-2 element text-center p-2 rounded" style={{ cursor: "pointer", transition: "background-color 0.3s ease, color 0.3s ease" }}>
             Statement
           </li>

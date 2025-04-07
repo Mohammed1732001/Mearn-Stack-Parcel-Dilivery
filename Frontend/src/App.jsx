@@ -16,7 +16,7 @@ function App() {
       path: "/Myparcels", element: <MyParcels />
     },
     {
-      path: "/parcels ", element: <Parcels />
+      path: "/allparcels", element: <Parcels />
     },
     {
       path: "/parcel/:id", element: <Parcel />
