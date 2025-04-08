@@ -1,73 +1,87 @@
-import ejs from "ejs"
-import sendMail from "../EmailService/sendEmail.js"
+import ejs from "ejs";
+import sendMail from "../EmailService/sendEmail.js";
 import parcelModel from "../../DB/models/parcel.model.js";
 
-
+// الدالة لإرسال البريد الإلكتروني
 const sendParcelPandingEmail = async () => {
     const parcels = await parcelModel.find({ status: 0 });
+
     if (parcels.length > 0) {
         for (let parcel of parcels) {
-            ejs.renderFile(
-                "templates/pendingparcel.ejs",
-                {
-                    sendername: parcel.sendername,
-                    from: parcel.from,
-                    to: parcel.to,
-                    recipientname: parcel.recipientName,
-                    cost: parcel.cost,
-                    weight: parcel.wieght,
-                    note: parcel.note,
-                },
-                async (err, data) => {
-                    let messageoption = {
-                        from: process.env.EMAIL,
-                        to: parcel.sendMail,
-                        subject: "You've got a parcel",
-                        html: data,
-                    };
-
-                    try {
-                        sendMail(messageoption);
-
-                    } catch (error) {
-                        console.log(err);
-                    }
+            try {
+                // تحقق من البريد الإلكتروني للمستلم
+                if (!parcel.senderEmail || !parcel.recipientEmail ) {
+                    console.error(`Missing email for parcel ID: ${parcel._id}`);
+                    continue; // تخطي الطرد إذا كان البريد الإلكتروني مفقودًا
                 }
-            );
 
-            ejs.renderFile(
-                "templates/pendingparcel.ejs",
-                {
-                    sendername: parcel.sendername,
-                    from: parcel.from,
-                    to: parcel.to,
-                    recipientname: parcel.recipientname,
-                    cost: parcel.cost,
-                    weight: parcel.weight,
-                    note: parcel.note,
-                },
-                async (err, data) => {
-                    let messageoption = {
-                        from: process.env.EMAIL,
-                        to: parcel.recipientemail,
-                        subject: "You've got a parcel",
-                        html: data,
-                    };
+                // استخدام ejs.renderFile داخل Promise لجعلها متزامنة
+                const data = await new Promise((resolve, reject) => {
+                    ejs.renderFile(
+                        "templates/pendingparcel.ejs",
+                        {
+                            sendername: parcel.senderName,
+                            from: parcel.from,
+                            to: parcel.to,
+                            recipientname: parcel.recipientName,
+                            cost: parcel.cost,
+                            weight: parcel.weight,
+                            note: parcel.note,
+                        },
+                        (err, renderedData) => {
+                            if (err) reject(new Error(`EJS Rendering Error: ${err}`));
+                            resolve(renderedData);
+                        }
+                    );
+                });
 
-                    try {
-                        sendMail(messageoption);
-                        await Parcel.findByIdAndUpdate(parcel._id, { $set: { status: 1 } });
-                    } catch (error) {
-                        console.log(err);
-                    }
+                // تحقق من وجود البريد الإلكتروني المرسل في البيئة
+                if (!process.env.EMAIL) {
+                    console.error("Missing email sender address in environment variables.");
+                    return;
                 }
-            );
+
+                // إرسال البريد الإلكتروني إلى المرسل
+                const senderMessageOption = {
+                    from: process.env.EMAIL,
+                    to: parcel.senderEmail,
+                    subject: "You've got a parcel",
+                    html: data,
+                };
+
+                // إرسال البريد الإلكتروني إلى المستلم
+                const recipientMessageOption = {
+                    from: process.env.EMAIL,
+                    to: parcel.recipientEmail,
+                    subject: "You've got a parcel",
+                    html: data,
+                };
+
+                // تحقق من حالة الطرد قبل تحديثها
+                if (parcel.status !== 0) {
+                    console.log(`Parcel ID: ${parcel._id} has already been processed.`);
+                    continue;
+                }
+
+                // إرسال البريد الإلكتروني للمرسل
+                await sendMail(senderMessageOption);
+
+                // إرسال البريد الإلكتروني للمستلم
+                await sendMail(recipientMessageOption);
+
+                // تحديث حالة الطرد بعد إرسال البريد الإلكتروني
+                const updatedParcel = await parcelModel.findByIdAndUpdate(parcel._id, { $set: { status: 1 } }, { new: true });
+                if (!updatedParcel) {
+                    console.error(`Failed to update status for parcel ID: ${parcel._id}`);
+                } else {
+                    console.log(`Parcel ID: ${parcel._id} status updated successfully.`);
+                }
+
+            } catch (error) {
+                console.error(`Error processing parcel ID: ${parcel._id}`, error);
+            }
         }
     }
 };
 
-
-
-
-
-export default sendParcelPandingEmail
+export default sendParcelPandingEmail;

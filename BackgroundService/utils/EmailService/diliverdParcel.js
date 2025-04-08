@@ -1,14 +1,13 @@
-import ejs from "ejs"
-import sendMail from "../EmailService/sendEmail.js"
+import ejs from "ejs";
+import sendMail from "../EmailService/sendEmail.js";
 import parcelModel from "../../DB/models/parcel.model.js";
 
-const SendParcelDeliveredEmail = async () => {
-  const parcels = await parcelModel.find({ status: 2 });
-
-  if (parcels.length > 0) {
-    for (let parcel of parcels) {
+// دالة لإرسال البريد الإلكتروني
+const sendParcelEmail = async (parcel, emailAddress, subject, templateName) => {
+  try {
+    const data = await new Promise((resolve, reject) => {
       ejs.renderFile(
-        "templates/deliveredparcel.ejs",
+        `templates/${templateName}.ejs`,
         {
           sendername: parcel.sendername,
           from: parcel.from,
@@ -18,59 +17,53 @@ const SendParcelDeliveredEmail = async () => {
           weight: parcel.weight,
           note: parcel.note,
         },
-        async (err, data) => {
-          let messageoption = {
-            from: process.env.EMAIL,
-            to: parcel.senderEmail,
-            subject: "Your parcel has been delivered",
-            html: data,
-          };
-
-          try {
-            sendMail(messageoption);
-           
-          } catch (error) {
-            console.log(err);
-          }
+        (err, renderedData) => {
+          if (err) reject(err);
+          resolve(renderedData);
         }
       );
+    });
 
-      ejs.renderFile(
-        "templates/deliveredparcel.ejs",
-        {
-            sendername: parcel.senderName,
-            from: parcel.from,
-            to: parcel.to,
-            recipientname: parcel.recipientName,
-            cost: parcel.cost,
-            weight: parcel.wieght,
-            note: parcel.note
-        },
-        async (err, data) => {
-          let messageoption = {
-            from: process.env.EMAIL,
-            to: parcel.recipientName,
-            subject: "Your parcel has been delivered",
-            html: data,
-          };
+    const messageOption = {
+      from: process.env.EMAIL,
+      to: emailAddress,
+      subject: subject,
+      html: data,
+    };
 
-          try {
-            sendMail(messageoption);
-            await parcelModel.findByIdAndUpdate(parcel._id, { $set: { status: 3} });
-          } catch (error) {
-            console.log(err);
-          }
-        }
+    await sendMail(messageOption);
+    console.log(`Email sent successfully to: ${emailAddress}`);
+  } catch (error) {
+    console.error(`Error sending email to ${emailAddress}:`, error);
+  }
+};
+
+// دالة رئيسية لإرسال البريد الإلكتروني للطرد الذي تم تسليمه
+const SendParcelDeliveredEmail = async () => {
+  const parcels = await parcelModel.find({ status: 2 });
+
+  if (parcels.length > 0) {
+    for (let parcel of parcels) {
+      // إرسال البريد الإلكتروني إلى المرسل
+      await sendParcelEmail(
+        parcel,
+        parcel.senderEmail,
+        "Your parcel has been delivered",
+        "deliveredparcel"
       );
+
+      // إرسال البريد الإلكتروني إلى المستلم
+      await sendParcelEmail(
+        parcel,
+        parcel.recipientEmail,
+        "Your parcel has been delivered",
+        "deliveredparcel"
+      );
+
+      // تحديث حالة الطرد بعد إرسال البريد الإلكتروني
+      await parcelModel.findByIdAndUpdate(parcel._id, { $set: { status: 3 } });
     }
   }
 };
 
-
-export default SendParcelDeliveredEmail
-
-
-
-
-
-
+export default SendParcelDeliveredEmail;

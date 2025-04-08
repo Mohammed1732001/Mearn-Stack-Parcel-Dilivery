@@ -32,11 +32,11 @@ export const login = async (req, res, next) => {
         const { email, password } = req.body
         const user = await userModel.findOne({ email })
         if (!user) {
-            return res.json({ message: "in valid -email or password" })
+            return res.json({ message: "in valid -email or password " })
         }
         const isMatch = compare({ plainText: password, hashValue: user.password })
         if (!isMatch) {
-            return res.json({ message: "in valid -email or password" })
+            return res.json({ message: "in valid -email or password " })
         }
         const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, process.env.SIGN_TOKEN, { expiresIn: "2d" })
         return res.status(200).json({ message: "Done", token })

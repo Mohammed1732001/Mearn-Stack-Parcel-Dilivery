@@ -26,7 +26,12 @@ export const getAllParcel = async (req, res, next) => {
 
 export const getParcelOne = async (req, res, next) => {
     try {
-        const id = req.params
+        const {id} = req.params
+        // console.log(id);
+        if (!id) {
+            res.json({ message: "not found Id" })
+
+        }
         const parcel = await parcelModel.findById(id)
         res.status(200).json({ message: "Done", parcel })
     } catch (error) {
