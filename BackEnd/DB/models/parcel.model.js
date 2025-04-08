@@ -11,6 +11,7 @@ const parcelSchema = new Schema({
         type: String,
         required: true
     },
+    cost: Number,
     senderName: {
         type: String,
         required: true
@@ -27,7 +28,7 @@ const parcelSchema = new Schema({
         type: String,
         required: true
     },
-    wieght: {
+    weight: {
         type: Number,
         required: true
     },
@@ -48,11 +49,11 @@ const parcelSchema = new Schema({
     },
     senderphone: {
         type: String,
-        required: true
+        // required: true
     },
     recipientphone: {
         type: String,
-        required: true
+        // required: true
     },
 }, { timestamps: true })
 

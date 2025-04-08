@@ -5,7 +5,8 @@ const router = Router();
 
 
 
-router.get("/", auth, authAdmin, userController.getAllUser)
+// router.get("/", auth, authAdmin, userController.getAllUser)
+router.get("/",userController.getAllUser)
 router.delete("/:id", userController.deleteUser)
 
 
