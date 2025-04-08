@@ -47,7 +47,7 @@ function App() {
         path: "/newuser", element: <NewUser />
       },
       {
-        path: "/Parcel/:parcelId", element: <Parcel />
+        path: "/Parcel/:id", element: <Parcel />
       },
       {
         path: "/Users", element: <Users />

@@ -4,12 +4,14 @@ import * as parcelController from "./controller/parcel.js"
 import { auth, authAdmin } from "../../middleWare/auth.middleWare.js";
 
 // add parcel
-router.post("/", auth,parcelController.addParcel)
+// router.post("/", auth,parcelController.addParcel)
+router.post("/", parcelController.addParcel)
 
 
 // get all parcel
 
-router.get("/",auth, authAdmin, parcelController.getAllParcel)
+// router.get("/",auth, authAdmin, parcelController.getAllParcel)
+router.get("/", parcelController.getAllParcel)
 
 
 
