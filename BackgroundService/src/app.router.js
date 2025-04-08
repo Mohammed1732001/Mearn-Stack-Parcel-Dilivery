@@ -22,7 +22,7 @@ const initApp = (express, app) => {
         })
     }
 
-    // run()
+    run()
 
 
 
