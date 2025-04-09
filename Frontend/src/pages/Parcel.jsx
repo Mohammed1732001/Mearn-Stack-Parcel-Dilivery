@@ -1,9 +1,35 @@
+import { useEffect, useState } from "react";
+
+import { IoCloudDoneSharp } from "react-icons/io5";
 import {
   BsGeoAltFill, BsBoxSeam, BsCalendar3, BsPersonFill, BsCurrencyDollar, BsPersonCheckFill,
   BsHash, BsSticky, BsEnvelopeFill, BsEnvelopeOpenFill, BsClockHistory, BsSend, BsArrowLeft
 } from "react-icons/bs";
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
+import { PuplicRequest } from "../requsetMethod";
+
+
 function Parcel() {
+  const Location = useLocation();
+  const parcelId = Location.pathname.split("/")[3]
+  const [parcel, setParcel] = useState([]);
+  // console.log(parcelId);
+
+
+  useEffect(() => {
+    const getParcel = async () => {
+      try {
+        const res = await PuplicRequest.get("/parcel/" + parcelId)
+        console.log(res.data.parcel);
+
+        setParcel(res.data.parcel)
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getParcel()
+  }, [parcelId])
+  const formattedDate = new Date(parcel.date).toLocaleDateString("en-GB")
   return (
     <div className="container my-5">
       <div className="bg-white rounded-4 shadow p-4">
@@ -17,44 +43,46 @@ function Parcel() {
             <ul className="list-unstyled">
               <li className="fw-bold mb-3">
                 <BsGeoAltFill className="me-2 text-primary" />
-                From: <span className="text-secondary">101ekekoev, USA</span>
+                From: <span className="text-secondary">{parcel.from}</span>
               </li>
               <li className="fw-bold mb-3">
                 <BsBoxSeam className="me-2 text-success" />
-                Weight: <span className="text-secondary">200kg</span>
+                Weight: <span className="text-secondary">{parcel.weight + "g"}</span>
               </li>
               <li className="fw-bold mb-3">
                 <BsCalendar3 className="me-2 text-info" />
-                Date: <span className="text-secondary">17/3/2025</span>
+                Date: <span className="text-secondary">{formattedDate}</span>
               </li>
               <li className="fw-bold mb-3">
                 <BsPersonFill className="me-2 text-dark" />
-                Sender: <span className="text-secondary">John Doe</span>
+                Sender: <span className="text-secondary">{parcel.senderName}</span>
               </li>
               <li className="fw-bold mb-3">
                 <BsGeoAltFill className="me-2 text-primary" />
-                To: <span className="text-secondary">10skkddmd, USA</span>
+                To: <span className="text-secondary">{parcel.to}</span>
               </li>
               <li className="fw-bold mb-3">
                 <BsCurrencyDollar className="me-2 text-warning" />
-                Cost: <span className="text-secondary">$200</span>
+                Cost: <span className="text-secondary">{parcel.cost + "$"}</span>
               </li>
               <li className="fw-bold mb-3">
                 <BsPersonCheckFill className="me-2 text-dark" />
-                Recipient: <span className="text-secondary">Maickel Doe</span>
+                Recipient: <span className="text-secondary">{parcel.recipientName}</span>
               </li>
               <li className="fw-bold mb-3">
                 <BsHash className="me-2 text-muted" />
-                Track ID: <span className="text-secondary">544954/55</span>
+                Track ID: <span className="text-secondary">{parcel._id}</span>
               </li>
               <li className="fw-bold mb-3">
                 <BsSticky className="me-2 text-danger" />
-                Note: <span className="fw-normal text-muted">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
+                Note: <span className="fw-normal text-muted">{parcel.note}</span>
               </li>
             </ul>
-            <button className="btn btn-dark mt-2">
-              <BsClockHistory className="me-1" />
-              Pending
+            <button className={parcel.status === 1 ? "btn btn-dark mt-2" : "btn btn-success mt-2"}>
+
+
+              {parcel.status === 1 ? (<><BsClockHistory className="me-1" /> Pending</>): (<><IoCloudDoneSharp className="me-1" /> Delivered</> )}
+
             </button>
           </div>
 
@@ -63,11 +91,11 @@ function Parcel() {
             <ul className="list-unstyled">
               <li className="fw-bold mb-3">
                 <BsEnvelopeFill className="me-2 text-primary" />
-                Sender Email: <span className="text-secondary">osos@gmail.com</span>
+                Sender Email: <span className="text-secondary">{parcel.senderEmail}</span>
               </li>
               <li className="fw-bold mb-3">
                 <BsEnvelopeOpenFill className="me-2 text-success" />
-                Recipient Email: <span className="text-secondary">Mohammed@gmail.com</span>
+                Recipient Email: <span className="text-secondary">{parcel.recipientEmail}</span>
               </li>
             </ul>
 

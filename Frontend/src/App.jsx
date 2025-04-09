@@ -1,10 +1,14 @@
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom"
+import { createBrowserRouter, RouterProvider, Outlet, Navigate } from "react-router-dom"
 import Home from "./pages/Home.jsx"
 import Login from "./pages/Login.jsx"
 import MyParcels from "./pages/MyParcels.jsx"
 import Parcels from "./pages/Parcels.jsx"
 import Parcel from "./pages/Parcel.jsx"
+import { useSelector } from "react-redux"
+
 function App() {
+  const user = useSelector((state) => state.user)
+
   const router = createBrowserRouter([
     {
       path: "/", element: <Home />
@@ -13,13 +17,13 @@ function App() {
       path: "/login", element: <Login />
     },
     {
-      path: "/Myparcels", element: <MyParcels />
+      path: "/Myparcels", element: user.currentUser ? <MyParcels/> : <Navigate to={"/login"}/>
     },
     {
-      path: "/allparcels", element: <Parcels />
+      path: "/allparcels", element: user.currentUser ? <Parcels /> : <Navigate to={"/login"} />
     },
     {
-      path: "/parcel/:id", element: <Parcel />
+      path: "/Myparcels/parcel/:id", element: user.currentUser ? <Parcel /> : <Navigate to={"/login"} />
     },
   ])
   return (
