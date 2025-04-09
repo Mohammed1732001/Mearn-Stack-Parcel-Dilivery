@@ -38,10 +38,10 @@ export const login = async (req, res, next) => {
         if (!isMatch) {
             return res.json({ message: "in valid -email or password " })
         }
-        const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, process.env.SIGN_TOKEN, { expiresIn: "2d" })
+        const token = jwt.sign({ id: user._id, email: user.email, role: user.role, FullName: user.fullName }, process.env.SIGN_TOKEN, { expiresIn: "2d" })
         return res.status(200).json({ message: "Done", token })
 
     } catch (error) {
-        return res.status(500).json({ message: "catch error", error:error.message })
+        return res.status(500).json({ message: "catch error", error: error.message })
     }
 }

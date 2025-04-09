@@ -1,13 +1,36 @@
 import NavBar from "../components/NavBar.jsx"
 import Footer from "../components/Footer.jsx"
 import { useState } from "react"
-
+import { login } from "../redux/apiCalls.js"
+import { Navigate } from "react-router-dom"
+import { useDispatch, useSelector } from "react-redux"
 function Login() {
-
   const [showPassword, setShowPassword] = useState(false)
+  const [email, setEmail] = useState()
+  const [password, setPassword] = useState()
+  const [loding, setLoding] = useState()
+  const user = useSelector((state) => state.user)
+  const error = useSelector((state) => state.user.error)
+  const dispatch = useDispatch()
+  const handleLogin = async () => {
+    if (email && password) {
+      try {
+        setLoding(true)
+        await login(dispatch, { email, password })
+        setLoding(false)
+
+      } catch (error) {
+        console.log(error);
+        setLoding(false)
+
+      }
+    }
+  }
   const handleTogglePassword = () => {
     setShowPassword(!showPassword)
   }
+  console.log(user.currentUser);
+
   return (
     <>
       <NavBar />
@@ -25,12 +48,13 @@ function Login() {
         </div>
         <div
           className="d-flex flex-column justify-content-center align-items-center"
-          style={{width: "100%",maxWidth: "450px",backgroundColor: "#E9EB77",borderRadius: "15px",padding: "30px 20px"}}>
-        
+          style={{ width: "100%", maxWidth: "450px", backgroundColor: "#E9EB77", borderRadius: "15px", padding: "30px 20px" }}>
+
           <input
             type="text"
             placeholder="Enter your email"
             className="p-3 mb-3 w-100"
+            onChange={(e) => setEmail(e.target.value)}
             style={{
               borderRadius: "5px",
               border: "1px solid #ddd",
@@ -42,6 +66,7 @@ function Login() {
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
               className="p-3 w-100"
+              onChange={(e) => setPassword(e.target.value)}
               style={{
                 borderRadius: "5px",
                 border: "1px solid #ddd",
@@ -62,10 +87,14 @@ function Login() {
               {showPassword ? "👁️" : "🔒"}
             </span>
           </div>
-          <button
-            className="btn btn-dark w-100 p-3 mt-3"style={{borderRadius: "5px",backgroundColor: "#333",color: "white",}} >
-            Login
+          <button onClick={handleLogin}
+            className="btn btn-dark w-100 p-3 mt-3" style={{ borderRadius: "5px", backgroundColor: "#333", color: "white", }}
+          >
+            {loding ? "loading...." : Login}
+            {user.currentUser && <Navigate to={"/Myparcels"} />}
           </button>
+
+          {error &&<span className="text-danger">Please Make sure that you have used correct email And Password</span>}
         </div>
       </div>
 
