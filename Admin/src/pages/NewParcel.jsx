@@ -1,35 +1,48 @@
-
 import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { PuplicRequest } from './requestMethod';
 
-
 function NewParcel() {
+  const [inputs, setInputs] = useState({});
+  const [loading, setLoading] = useState(false); // لإدارة حالة التحميل
 
-  const [inputs, setInputs] = useState({})
+  // دالة للتحقق من صحة البريد الإلكتروني
+  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+  // دالة لتحديث الحقول
   const handleChange = (e) => {
     setInputs((prev) => {
-      return { ...prev, [e.target.name]: e.target.value }
-    })
-  }
+      return { ...prev, [e.target.name]: e.target.value };
+    });
+  };
 
+  // دالة لإضافة الطرد
   const handleAddParcel = async () => {
-
-    try {
-      await PuplicRequest.post("/parcel", inputs)
-      toast.success("Parcel has been successfully saved to dataBase.")
-    } catch (error) {
-      console.log(error);
-      console.log(error.stack);
-    
-
+    // التحقق من الحقول الأساسية
+    if (!inputs.from || !inputs.to || !inputs.senderName || !inputs.recipientName) {
+      toast.error("Please fill in all required fields.");
+      return;
     }
 
-  }
+    // التحقق من صحة البريد الإلكتروني
+    if (!isValidEmail(inputs.senderEmail) || !isValidEmail(inputs.recipientEmail)) {
+      toast.error("Please provide valid email addresses.");
+      return;
+    }
+
+    setLoading(true); // بدء التحميل
+    try {
+      await PuplicRequest.post("/parcel", inputs);
+      toast.success("Parcel has been successfully saved to database.");
+      setInputs({}); // تنظيف الحقول بعد الإرسال الناجح
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to add parcel. Please try again.");
+    }
+    setLoading(false); // إيقاف التحميل
+  };
 
   return (
-
     <div className="container-fluid p-3 mt-2" style={{ boxSizing: "borderBox", backgroundColor: "whitesmoke", overflowX: "hidden" }}>
       <h1 className="p-1 m-2 text-center" style={{ fontSize: "20px" }}>New Parcel</h1>
       <div className="row d-flex flex-wrap w-100 ">
@@ -65,7 +78,6 @@ function NewParcel() {
           </div>
         </div>
 
-
         <div className="col-12 col-md-6 col-lg-4 p-2">
           <div className="d-flex flex-column my-2">
             <label>Weight</label>
@@ -78,6 +90,11 @@ function NewParcel() {
           </div>
 
           <div className="d-flex flex-column my-2">
+            <label>Assign To</label>
+            <input type="email" name='assignedToEmail' onChange={handleChange} className="form-control p-2" placeholder="cbsjcccb@gmail.com" />
+          </div>
+
+          <div className="d-flex flex-column my-2">
             <label>Date</label>
             <input type="date" name='date' onChange={handleChange} className="form-control p-2" />
           </div>
@@ -87,16 +104,14 @@ function NewParcel() {
             <textarea className="form-control p-2" name='note' onChange={handleChange} placeholder="Note about the parcel"></textarea>
           </div>
 
-          <button className="btn btn-primary w-100 my-2" onClick={handleAddParcel}>Create</button>
-          <ToastContainer />
+          <button className="btn btn-primary w-100 my-2" onClick={handleAddParcel} disabled={loading}>
+            {loading ? "Saving..." : "Create"}
+          </button>
         </div>
       </div>
+      <ToastContainer />
     </div>
-
-
-
-
-  )
+  );
 }
 
-export default NewParcel
+export default NewParcel;

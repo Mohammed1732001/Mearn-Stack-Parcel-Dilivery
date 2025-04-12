@@ -1,35 +1,49 @@
-import { useEffect, useState } from "react";
 
+import { useEffect, useState } from "react";
 import { IoCloudDoneSharp } from "react-icons/io5";
 import {
   BsGeoAltFill, BsBoxSeam, BsCalendar3, BsPersonFill, BsCurrencyDollar, BsPersonCheckFill,
   BsHash, BsSticky, BsEnvelopeFill, BsEnvelopeOpenFill, BsClockHistory, BsSend, BsArrowLeft
 } from "react-icons/bs";
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom";
 import { PuplicRequest } from "../requsetMethod";
-
 
 function Parcel() {
   const Location = useLocation();
-  const parcelId = Location.pathname.split("/")[3]
-  const [parcel, setParcel] = useState([]);
-  // console.log(parcelId);
-
+  const parcelId = Location.pathname.split("/")[3];
+  const [parcel, setParcel] = useState(null); // ✅ parcel as object
 
   useEffect(() => {
     const getParcel = async () => {
       try {
-        const res = await PuplicRequest.get("/parcel/" + parcelId)
-        console.log(res.data.parcel);
-
-        setParcel(res.data.parcel)
+        const res = await PuplicRequest.get("/parcel/" + parcelId);
+        setParcel(res.data.parcel);
       } catch (error) {
         console.log(error);
       }
+    };
+    getParcel();
+  }, [parcelId]);
+
+  const handleSubmit = async () => {
+    try {
+      const res = await PuplicRequest.put(`/parcel/${parcelId}`, {
+        status: 2, // ✅ Change status to 2
+      });
+      setParcel(res.data.parcel);
+      // console.log(res.data.parcel);
+
+    } catch (error) {
+      console.log("Error updating status:", error);
     }
-    getParcel()
-  }, [parcelId])
-  const formattedDate = new Date(parcel.date).toLocaleDateString("en-GB")
+  };
+
+  if (!parcel || !parcel.date) {
+    return <div className="text-center my-5">Loading...</div>;
+  }
+
+  const formattedDate = new Date(parcel.date).toLocaleDateString("en-GB");
+
   return (
     <div className="container my-5">
       <div className="bg-white rounded-4 shadow p-4">
@@ -78,11 +92,16 @@ function Parcel() {
                 Note: <span className="fw-normal text-muted">{parcel.note}</span>
               </li>
             </ul>
-            <button className={parcel.status === 1 ? "btn btn-dark mt-2" : "btn btn-success mt-2"}>
-
-
-              {parcel.status === 1 ? (<><BsClockHistory className="me-1" /> Pending</>): (<><IoCloudDoneSharp className="me-1" /> Delivered</> )}
-
+            <button className={parcel.status === 2 ? "btn btn-success mt-2" : "btn btn-dark mt-2"}>
+              {parcel.status === 2 ? (
+                <>
+                  <IoCloudDoneSharp className="me-1" /> Delivered
+                </>
+              ) : (
+                <>
+                  <BsClockHistory className="me-1" /> Pending
+                </>
+              )}
             </button>
           </div>
 
@@ -107,7 +126,7 @@ function Parcel() {
                 style={{ backgroundColor: "whitesmoke" }}
               ></textarea>
             </div>
-            <button className="btn btn-primary">
+            <button className="btn btn-primary" onClick={handleSubmit}>
               <BsSend className="me-1" />
               Submit
             </button>
@@ -115,7 +134,7 @@ function Parcel() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Parcel
+export default Parcel;

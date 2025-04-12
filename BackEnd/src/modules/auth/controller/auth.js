@@ -14,10 +14,10 @@ export const signUp = async (req, res, next) => {
 
         const cheackUser = await userModel.findOne({ email })
         if (cheackUser) {
-            return res.json({ message: "email already exist" })
+            return res.status(504).json({ message: "email already exist" })
         }
         if (password != Cpassword) {
-            return res.json({ message: "password not match" })
+            return res.status(503).json({ message: "password not match" })
         }
         const hashPassword = hash({ plainText: password })
         const user = await userModel.create({ fullName, email, age, country, address, password: hashPassword })
@@ -31,10 +31,13 @@ export const login = async (req, res, next) => {
     try {
         const { email, password } = req.body
         const user = await userModel.findOne({ email })
+        console.log(user);
         if (!user) {
             return res.json({ message: "in valid -email or password " })
         }
         const isMatch = compare({ plainText: password, hashValue: user.password })
+        console.log(isMatch);
+        
         if (!isMatch) {
             return res.json({ message: "in valid -email or password " })
         }

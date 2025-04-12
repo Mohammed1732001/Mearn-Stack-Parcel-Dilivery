@@ -5,9 +5,10 @@ const router = Router();
 
 
 
-// router.get("/", auth, authAdmin, userController.getAllUser)
 router.get("/",userController.getAllUser)
+router.get("/:id",userController.getOneUser)
 router.delete("/:id", userController.deleteUser)
+router.put("/:id", userController.UpdateUser)
 
 
 

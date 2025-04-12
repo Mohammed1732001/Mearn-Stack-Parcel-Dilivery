@@ -1,17 +1,42 @@
-import { Link } from "react-router-dom"
-const Navbar = () => {
-    return (
-        <nav className="navbar" style={{ height: "70px", backgroundColor: "#E9EB77" }}>
-            <div className="container-fluid px-3 d-flex flex-wrap justify-content-between align-items-center">
-                <div className="d-flex align-items-center" style={{ maxWidth: "200px" }}>
-                    <Link to="/">
-                        <img src="../../public/logo.png" alt="Logo" style={{ width: "100%", maxWidth: "150px", height: "auto" }} />
-                    </Link>
-                </div>
-                <button className="btn fw-semibold fs-6 mt-2 mt-sm-0">Logout</button>
-            </div>
-        </nav>
-    )
-}
+import { useNavigate } from "react-router-dom";
 
-export default Navbar
+const Navbar = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/Login", { replace: true });
+  };
+
+  return (
+    <nav className="navbar" style={{ height: "70px", backgroundColor: "#E9EB77" }}>
+      <div className="container-fluid px-3 d-flex justify-content-between align-items-center">
+        <img src="../../public/logo.png" style={{ width: "150px" }} />
+        <button
+          className="btn fw-semibold fs-6"
+          onClick={handleLogout}
+          style={{
+            backgroundColor: "#333",
+            color: "white",
+            border: "none",
+            borderRadius: "8px",
+            padding: "8px 16px",
+            fontSize: "16px",
+            cursor: "pointer",
+            transition: "all 0.3s ease-in-out",
+          }}
+          onMouseOver={(e) => {
+            e.target.style.backgroundColor = "#555"; // تغيير اللون عند التمرير
+          }}
+          onMouseOut={(e) => {
+            e.target.style.backgroundColor = "#333"; // إعادة اللون الأصلي
+          }}
+        >
+          Logout
+        </button>
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;

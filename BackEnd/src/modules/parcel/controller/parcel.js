@@ -51,6 +51,7 @@ export const updateParcel = async (req, res, next) => {
     }
 }
 
+
 export const deleteParcel = async (req, res, next) => {
     try {
         const { id } = req.params
@@ -66,7 +67,7 @@ export const deleteParcel = async (req, res, next) => {
 export const getUserParcel = async (req, res, next) => {
     try {
         const { email } = req.body
-        const parcels = await parcelModel.find({ email }).sort({ createdAt: -1 })
+        const parcels = await parcelModel.find({ assignedToEmail: email }).sort({ createdAt: -1 });
         res.status(200).json({ message: "Done", parcels })
     } catch (error) {
         res.status(500).json({ message: "catch error", error })

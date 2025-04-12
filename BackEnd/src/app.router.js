@@ -3,27 +3,26 @@
 // App router
 
 import conectDB from "../DB/conniction.js"
-import authModel from "./modules/auth/auth.router.js"
-import userModel from "./modules/user/user.router.js"
-import parcelModel from "./modules/parcel/parcel.router.js"
-
+import authRouter from "./modules/auth/auth.router.js";
+import userRouter from "./modules/user/user.router.js";
+import parcelRouter from "./modules/parcel/parcel.router.js";
 
 const initApp = (app, express) => {
-    app.use(express.json())
+  // Parse incoming JSON
+  app.use(express.json());
 
-    app.use("/api/v1/auth", authModel)
-    app.use("/api/v1/user", userModel)
-    app.use("/api/v1/parcel", parcelModel)
+  // Connect to database before routes
+  conectDB();
 
+  // Mount routers
+  app.use("/api/v1/auth", authRouter);
+  app.use("/api/v1/user", userRouter);
+  app.use("/api/v1/parcel", parcelRouter);
 
+  // Fallback route
+  app.all("*", (req, res) => {
+    res.status(404).json({ message: "ERROR 404 - Page Not Found" });
+  });
+};
 
-
-
-    app.get("*", (req, res, next) => {
-        res.json({ message: "ERROR 404 PAGE NOT FOUND" })
-    })
-    // connect DB
-    conectDB()
-}
-
-export default initApp
+export default initApp;

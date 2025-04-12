@@ -4,7 +4,9 @@ import Login from "./pages/Login.jsx"
 import MyParcels from "./pages/MyParcels.jsx"
 import Parcels from "./pages/Parcels.jsx"
 import Parcel from "./pages/Parcel.jsx"
+import Statement from "./pages/Statement.jsx" 
 import { useSelector } from "react-redux"
+// import Statement from "./pages/Statement.jsx"
 
 function App() {
   const user = useSelector((state) => state.user)
@@ -24,6 +26,9 @@ function App() {
     },
     {
       path: "/Myparcels/parcel/:id", element: user.currentUser ? <Parcel /> : <Navigate to={"/login"} />
+    },
+    {
+      path: "/statement", element: user.currentUser ? <Statement/> : <Navigate to={"/login"} />
     },
   ])
   return (

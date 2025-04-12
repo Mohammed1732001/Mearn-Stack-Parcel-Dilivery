@@ -1,35 +1,48 @@
-import NavBar from "../components/NavBar.jsx"
-import Footer from "../components/Footer.jsx"
-import { useState } from "react"
-import { login } from "../redux/apiCalls.js"
-import { Navigate } from "react-router-dom"
-import { useDispatch, useSelector } from "react-redux"
+import NavBar from "../components/NavBar.jsx";
+import Footer from "../components/Footer.jsx";
+import { useState } from "react";
+import { login } from "../redux/apiCalls.js";
+import { Navigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
 function Login() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState()
-  const [password, setPassword] = useState()
-  const [loding, setLoding] = useState()
-  const user = useSelector((state) => state.user)
-  const error = useSelector((state) => state.user.error)
-  const dispatch = useDispatch()
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState(""); // رسالة خطأ عند فشل التحقق من الإدخال
+
+  const user = useSelector((state) => state.user);
+  const error = useSelector((state) => state.user.error);
+
+  const dispatch = useDispatch();
+
   const handleLogin = async () => {
-    if (email && password) {
-      try {
-        setLoding(true)
-        await login(dispatch, { email, password })
-        setLoding(false)
-
-      } catch (error) {
-        console.log(error);
-        setLoding(false)
-
-      }
+    if (!email || !password) {
+      setFormError("Email and Password are required");
+      return;
     }
-  }
+
+    setFormError(""); // إزالة الخطأ القديم
+
+    try {
+      setLoading(true);
+      await login(dispatch, { email, password });
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    }
+  };
+
   const handleTogglePassword = () => {
-    setShowPassword(!showPassword)
+    setShowPassword(!showPassword);
+  };
+
+  // لو المستخدم سجل الدخول بنجاح، نوجهه على صفحة MyParcels
+  if (user.currentUser) {
+    return <Navigate to="/Myparcels" />;
   }
-  console.log(user.currentUser);
 
   return (
     <>
@@ -48,12 +61,19 @@ function Login() {
         </div>
         <div
           className="d-flex flex-column justify-content-center align-items-center"
-          style={{ width: "100%", maxWidth: "450px", backgroundColor: "#E9EB77", borderRadius: "15px", padding: "30px 20px" }}>
-
+          style={{
+            width: "100%",
+            maxWidth: "450px",
+            backgroundColor: "#E9EB77",
+            borderRadius: "15px",
+            padding: "30px 20px",
+          }}
+        >
           <input
             type="text"
             placeholder="Enter your email"
             className="p-3 mb-3 w-100"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
             style={{
               borderRadius: "5px",
@@ -66,6 +86,7 @@ function Login() {
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
               className="p-3 w-100"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               style={{
                 borderRadius: "5px",
@@ -87,21 +108,33 @@ function Login() {
               {showPassword ? "👁️" : "🔒"}
             </span>
           </div>
-          <button onClick={handleLogin}
-            className="btn btn-dark w-100 p-3 mt-3" style={{ borderRadius: "5px", backgroundColor: "#333", color: "white", }}
+
+          <button
+            onClick={handleLogin}
+            className="btn btn-dark w-100 p-3 mt-3"
+            style={{
+              borderRadius: "5px",
+              backgroundColor: "#333",
+              color: "white",
+            }}
           >
-            {loding ? "loading...." : Login}
-            {user.currentUser && <Navigate to={"/Myparcels"} />}
+            {loading ? "Loading..." : "Login"}
           </button>
 
-          {error &&<span className="text-danger">Please Make sure that you have used correct email And Password</span>}
+          {/* عرض رسالة الخطأ عند عدم إدخال البيانات */}
+          {formError && <span className="text-danger mt-2">{formError}</span>}
+
+          {/* عرض رسالة الخطأ من السيرفر لو البيانات غلط */}
+          {error && !formError && (
+            <span className="text-danger mt-2">
+              Please make sure that you have used correct Email and Password
+            </span>
+          )}
         </div>
       </div>
-
-
       <Footer />
     </>
-  )
+  );
 }
 
-export default Login
+export default Login;

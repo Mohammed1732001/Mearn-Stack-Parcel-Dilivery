@@ -17,9 +17,11 @@ function Users() {
       field: "edit", headerName: "Edit", width: 120,
       renderCell: (params) => {
         return (
-          <button className='btn btn-primary'>
-            Edit <FiEdit style={{ color: "white", marginLeft: "3px" }} />
-          </button>
+          <Link to={`/user/${params.id}`}>
+            <button className='btn btn-primary'>
+              Edit <FiEdit style={{ color: "white", marginLeft: "3px" }} />
+            </button>
+          </Link>
         );
       }
     },
@@ -27,8 +29,8 @@ function Users() {
       field: "delete", headerName: "Delete", width: 120,
       renderCell: (params) => {
         console.log(params.id);
-        
-        
+
+
         return (
           <button className='btn btn-danger' onClick={() => handleDelete(params.id)} >
             Delete <FaTrash style={{ color: "white", marginLeft: "3px" }} />
@@ -44,8 +46,6 @@ function Users() {
         const res = await PuplicRequest.get("/user")
         setData(res.data.user)
         // console.log(res.data.user);
-
-
       } catch (error) {
         console.log(error);
 
@@ -56,7 +56,7 @@ function Users() {
 
   const handleDelete = async (id) => {
     try {
-      await PuplicRequest.delete(`/users/${id}`)
+      await PuplicRequest.delete(`/user/${id}`)
       window.location.reload()
     } catch (error) {
       console.log(error);
