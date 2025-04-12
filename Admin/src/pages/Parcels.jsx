@@ -1,14 +1,14 @@
-import { DataGrid, } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import { Link } from "react-router-dom";
-import { FaTrash } from "react-icons/fa"
+import { FaTrash } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
 import { useState, useEffect } from 'react';
 import { PuplicRequest } from './requestMethod';
+
 function Parcels() {
-
-
   const [data, setData] = useState([]);
-
+  const [page, setPage] = useState(1);
+  const [itemsPerPage] = useState(8);
 
   const columns = [
     { field: "_id", headerName: "ID", width: 50 },
@@ -20,10 +20,8 @@ function Parcels() {
     {
       field: "edit", headerName: "Edit", width: 130,
       renderCell: (params) => {
-        console.log(params);
-        
         return (
-          <Link to={`/parcel/${params.row._id}`}> 
+          <Link to={`/parcel/${params.row._id}`}>
             <button className='btn btn-primary'>
               Edit <FiEdit style={{ color: "white", marginLeft: "3px" }} />
             </button>
@@ -35,7 +33,7 @@ function Parcels() {
       field: "delete", headerName: "Delete", width: 130,
       renderCell: (params) => {
         return (
-          <button className='btn btn-danger' onClick={()=>handleDelete(params.row._id)}>
+          <button className='btn btn-danger' onClick={() => handleDelete(params.row._id)}>
             Delete <FaTrash style={{ color: "white", marginLeft: "3px" }} />
           </button>
         );
@@ -45,33 +43,36 @@ function Parcels() {
 
   useEffect(() => {
     const getParcels = async () => {
-
-
       try {
-        const res = await PuplicRequest.get("/parcel")
-        console.log(res);
-        // console.log(res.data.parcels);
-
-
-        setData(res.data)
+        const res = await PuplicRequest.get("/parcel");
+        setData(res.data);
       } catch (error) {
         console.log(error);
-
       }
-    }
-
-
-    getParcels()
-  }, [])
+    };
+    getParcels();
+  }, []);
 
   const handleDelete = async (id) => {
     try {
-      await PuplicRequest.delete(`/parcel/${id}`)
-      window.location.reload()
+      await PuplicRequest.delete(`/parcel/${id}`);
+      setData((prevData) => prevData.filter(parcel => parcel._id !== id));
     } catch (error) {
       console.log(error);
     }
-  }
+  };
+
+  const handleNextPage = () => {
+    setPage(prevPage => prevPage + 1);
+  };
+
+  const handlePrevPage = () => {
+    setPage(prevPage => prevPage - 1);
+  };
+
+  // تقسيم البيانات إلى أجزاء (Pagination)
+  const paginatedData = data.parcels ? data.parcels.slice((page - 1) * itemsPerPage, page * itemsPerPage) : [];
+
   return (
     <div className="container-fluid p-3" style={{ backgroundColor: "whitesmoke" }}>
       <div className="d-flex justify-content-between">
@@ -83,15 +84,32 @@ function Parcels() {
 
       <div style={{ width: '100%' }}>
         <DataGrid
-          rows={data.parcels}
+          rows={paginatedData}
           getRowId={(row) => row._id}
-          columns={columns} checkboxSelection />
+          columns={columns}
+          checkboxSelection
+        />
+      </div>
+
+      {/* أزرار التنقل للصفحات */}
+      <div className="d-flex justify-content-between mt-3">
+        <button
+          onClick={handlePrevPage}
+          disabled={page === 1}
+          className="btn btn-secondary"
+        >
+          Prev
+        </button>
+        <button
+          onClick={handleNextPage}
+          disabled={data.parcels && paginatedData.length < itemsPerPage}
+          className="btn btn-secondary"
+        >
+          Next
+        </button>
       </div>
     </div>
   );
-
-
-
 }
 
-export default Parcels
+export default Parcels;

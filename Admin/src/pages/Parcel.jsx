@@ -21,6 +21,8 @@ function Parcel() {
       try {
         const res = await PuplicRequest.get("/parcel/" + parcelId)
         setparcel(res.data.parcel)
+        console.log(res.data.parcel);
+        
       } catch (error) {
         console.log(error)
       }
@@ -82,6 +84,10 @@ function Parcel() {
           <div className="d-flex flex-column my-2">
             <label>Cost</label>
             <input type="number" className="form-control p-2" name="cost" defaultValue={parcel.cost} onChange={handleChange} />
+          </div>
+          <div className="d-flex flex-column my-2">
+            <label>Assign To</label>
+            <input type="email" className="form-control p-2" name="assignedToEmail" defaultValue={parcel.assignedToEmail} onChange={handleChange} />
           </div>
 
           <div className="d-flex flex-column my-2">

@@ -22,7 +22,7 @@ const userSlice = createSlice({
 
         loginFailure: (state) => {
             state.isFetching = false;
-            state.error = false;
+            state.error = true;
         },
         logOut: (state) => {
             state.isFetching = false;

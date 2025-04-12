@@ -73,9 +73,14 @@ console.log(decoded);
           <DataGrid
             rows={parcels}
             getRowId={(row) => row._id}
+            onRowClick={(params) => {
+              // نقل المستخدم إلى رابط تفاصيل الطرد باستخدام _id
+              window.location.href = `Myparcels/parcel/${params.row._id}`;
+            }}
             columns={columns}
             checkboxSelection
             disableRowSelectionOnClick
+            style={ { cursor:"pointer"}}
           />
         </div>
       </div>

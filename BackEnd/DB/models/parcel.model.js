@@ -55,6 +55,11 @@ const parcelSchema = new Schema({
         type: String,
         // required: true
     },
+    assignedToEmail: {
+        type: String,
+        required: true
+    }
+
 }, { timestamps: true })
 
 

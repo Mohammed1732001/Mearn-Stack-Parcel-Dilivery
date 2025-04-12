@@ -1,42 +1,63 @@
 import { useEffect, useState } from 'react';
 import { FaUser } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import { PuplicRequest } from '../requsetMethod';
 import { logOut } from '../redux/userRedux';
 import { jwtDecode } from "jwt-decode";
 
-
 const MyParcels = () => {
   const [open, setOpen] = useState(false);
   const [parcels, setParcels] = useState([]);
+  const [decoded, setDecoded] = useState(null);
+
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user);
-  console.log(user);
-  const token = user.currentUser.token
-  console.log(token);
-  
-  const decoded = jwtDecode(token)
-console.log(decoded);
-
+  const location = useLocation(); // لمعرفة إذا كنا أصلًا في صفحة login
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
 
-  // فك تشفير التوكن واستخراج البريد الإلكتروني للمستخدم
-  
+  // Check for token validity once
+  useEffect(() => {
+    const checkAuth = () => {
+      try {
+        if (!user.currentUser || !user.currentUser.token) {
+          dispatch(logOut());
+          localStorage.removeItem("token");
+
+          // ✅ فقط نعمل navigate لو مش بالفعل في صفحة login
+          if (location.pathname !== "/login") {
+            navigate("/login");
+          }
+
+        } else {
+          const decodedToken = jwtDecode(user.currentUser.token);
+          setDecoded(decodedToken);
+        }
+      } catch (err) {
+        dispatch(logOut());
+        localStorage.removeItem("token");
+
+        if (location.pathname !== "/login") {
+          navigate("/login");
+        }
+      }
+    };
+
+    checkAuth();
+  }, []); // ✅ يحصل مرة واحدة فقط عند تحميل الصفحة
+
   const handleOpen = () => {
     setOpen(!open);
   };
 
   useEffect(() => {
     const getParcels = async () => {
-      const email = decoded.email; // استخراج البريد الإلكتروني من التوكن
-      if (email) {
+      if (decoded?.email) {
         try {
           const res = await PuplicRequest.post("/parcel/me", {
-            email: email, // إرسال البريد الإلكتروني
+            email: decoded.email,
           });
-
-          setParcels(res.data.parcels); // تعيين البيانات للـ state
+          setParcels(res.data.parcels);
         } catch (error) {
           console.log(error);
         }
@@ -44,24 +65,25 @@ console.log(decoded);
     };
 
     getParcels();
-  }, []); // أضفنا تعيين empty dependency array لأننا لا نحتاج إلى تكرار الاستعلام بعد التوكن
+  }, [decoded]);
 
   const Logout = () => {
     dispatch(logOut());
-    localStorage.removeItem("token"); // إزالة التوكن من localStorage عند تسجيل الخروج
+    localStorage.removeItem("token");
     navigate("/login");
   };
+
+  if (!decoded) return null; // ⛔ ما نرندرش الصفحة قبل التحقق
 
   return (
     <div>
       <div className="d-flex justify-content-end align-items-center mt-3 position-relative" style={{ cursor: "pointer" }}>
         <div className="text-light" onClick={handleOpen} style={{ fontSize: "18px", fontWeight: "600" }}>
-          <FaUser className="me-2" /> {decoded.FullName || "Loading..."}
+          <FaUser className="me-2" /> {decoded?.FullName || "Loading..."}
         </div>
 
         {open && (
-          <div
-            className="position-absolute shadow-lg rounded-3 p-3"
+          <div className="position-absolute shadow-lg rounded-3 p-3"
             style={{
               top: "25px",
               right: "0",
@@ -72,17 +94,13 @@ console.log(decoded);
             }}
           >
             <ul className="list-unstyled m-0">
-              <Link to="/allparcels">
-                <li className="my-2 element text-center p-2 rounded" style={{ cursor: "pointer", transition: "background-color 0.3s ease, color 0.3s ease" }}>
-                  All Parcels
-                </li>
+              <Link style={{ textDecoration: "none" }} to="/allparcels">
+                <li className="my-2 element text-center p-2 rounded">All Parcels</li>
               </Link>
-              <li className="my-2 element text-center p-2 rounded" style={{ cursor: "pointer", transition: "background-color 0.3s ease, color 0.3s ease" }}>
-                Statement
-              </li>
-              <li className="my-2 element text-center p-2 rounded" onClick={Logout} style={{ cursor: "pointer", transition: "background-color 0.3s ease, color 0.3s ease" }}>
-                Logout
-              </li>
+              <Link style={{ textDecoration: "none" }} to="/statement">
+                <li className="my-2 element text-center p-2 rounded">Statement</li>
+              </Link>
+              <li className="my-2 element text-center p-2 rounded" onClick={Logout}>Logout</li>
             </ul>
           </div>
         )}
@@ -91,25 +109,23 @@ console.log(decoded);
       <div className="container mt-4">
         <h2 className="text-white" style={{ fontSize: "25px", fontWeight: "600" }}>My Parcels</h2>
 
-        {/* Parcel Item */}
-        {parcels.map((parcel, index) => {
-          const formattedDate = new Date(parcel.date).toLocaleDateString("en-GB");  // تنسيق اليوم/شهر/سنة
-
+        {parcels.slice(0, 3).map((parcel, index) => {
+          const formattedDate = new Date(parcel.date).toLocaleDateString("en-GB");
           return (
-            <Link to={`parcel/${parcel._id}`} style={{textDecoration:"none"}} key={index}>
+            <Link to={`parcel/${parcel._id}`} style={{ textDecoration: "none", color: "black", fontWeight: "600" }} key={index}>
               <div className="d-flex flex-column flex-md-row justify-content-between bg-light mb-3 p-3 rounded-3 shadow-sm">
                 <div className="flex-grow-1">
                   <ul>
                     <li>From: {parcel.from}</li>
                     <li>Weight: {parcel.weight + "g"}</li>
-                    <li>Date: {formattedDate}</li> {/* التاريخ منسق هنا */}
+                    <li>Date: {formattedDate}</li>
                     <li>Sender: {parcel.senderName}</li>
                   </ul>
                 </div>
                 <div className="d-flex flex-column align-items-center">
                   <span>To: {parcel.to}</span>
-                  <button className={parcel.status === 1 ? "btn btn-dark mt-2" : "btn btn-success mt-2"}>
-                    {parcel.status === 1 ? "Pending" : "Delivered"}
+                  <button className={parcel.status === 1 || parcel.status === 0 ? "btn btn-dark mt-2" : "btn btn-success mt-2"}>
+                    {parcel.status === 1 || parcel.status === 0 ? "Pending" : "Delivered"}
                   </button>
                 </div>
               </div>
@@ -122,439 +138,3 @@ console.log(decoded);
 };
 
 export default MyParcels;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import { useEffect, useState } from 'react';
-// import { FaUser } from 'react-icons/fa';
-// import { Link, useNavigate } from 'react-router-dom';
-// import { useDispatch, useSelector } from "react-redux";
-// import { PuplicRequest } from '../requsetMethod';
-// import { logOut } from '../redux/userRedux';
-
-// const MyParcels = () => {
-//   const [open, setOpen] = useState(false);
-//   const [parcels, setParcels] = useState([]);
-//   const navigate = useNavigate();
-//   const user = useSelector((state) => state.user);
-//   console.log(user);
-  
-//   const dispatch = useDispatch();
-
-//   const handleOpen = () => {
-//     setOpen(!open);
-//   };
-
-//   useEffect(() => {
-//     const getParcels = async () => {
-//       try {
-//         const res = await PuplicRequest.post("/parcel/me", {
-//           email: user.currentUser.email  // إرسال البريد الإلكتروني
-//         });
-
-//         setParcels(res.data.parcels);  // تعيين البيانات للـ state
-//       } catch (error) {
-//         console.log(error);
-//       }
-//     };
-
-//     if (user?.currentUser?.email) {
-//       getParcels();  // فقط قم بالاستعلام إذا كان المستخدم مسجلاً
-//     }
-//   }, [user?.currentUser?.email]);  // إضافة dependecy على البريد الإلكتروني للمستخدم
-
-//   const Logout = () => {
-//     dispatch(logOut());
-//     navigate("/login");
-//   };
-
-//   return (
-//     <div>
-//       <div className="d-flex justify-content-end align-items-center mt-3 position-relative" style={{ cursor: "pointer" }}>
-//         <div className="text-light" onClick={handleOpen} style={{ fontSize: "18px", fontWeight: "600" }}>
-//           <FaUser className="me-2" /> {user?.currentUser?.fullName || "Loading..."}
-//         </div>
-
-//         {open && (
-//           <div
-//             className="position-absolute shadow-lg rounded-3 p-3"
-//             style={{
-//               top: "25px",
-//               right: "0",
-//               width: "250px",
-//               backgroundColor: "#f8f9fa",
-//               zIndex: "999",
-//               boxShadow: "0px 10px 15px rgba(0,0,0,0.1)",
-//             }}
-//           >
-//             <ul className="list-unstyled m-0">
-//               <Link to="/allparcels">
-//                 <li className="my-2 element text-center p-2 rounded" style={{ cursor: "pointer", transition: "background-color 0.3s ease, color 0.3s ease" }}>
-//                   All Parcels
-//                 </li>
-//               </Link>
-//               <li className="my-2 element text-center p-2 rounded" style={{ cursor: "pointer", transition: "background-color 0.3s ease, color 0.3s ease" }}>
-//                 Statement
-//               </li>
-//               <li className="my-2 element text-center p-2 rounded" onClick={Logout} style={{ cursor: "pointer", transition: "background-color 0.3s ease, color 0.3s ease" }}>
-//                 Logout
-//               </li>
-//             </ul>
-//           </div>
-//         )}
-//       </div>
-
-//       <div className="container mt-4">
-//         <h2 className="text-white" style={{ fontSize: "25px", fontWeight: "600" }}>My Parcels</h2>
-
-//         {/* Parcel Item */}
-//         {parcels.map((parcel, index) => {
-//           const formattedDate = new Date(parcel.date).toLocaleDateString("en-GB");  // تنسيق اليوم/شهر/سنة
-
-//           return (
-//             <Link to={`parcel/${parcel._id}`} key={index}>
-//               <div className="d-flex flex-column flex-md-row justify-content-between bg-light mb-3 p-3 rounded-3 shadow-sm">
-//                 <div className="flex-grow-1">
-//                   <ul>
-//                     <li>From: {parcel.from}</li>
-//                     <li>Weight: {parcel.weight + "g"}</li>
-//                     <li>Date: {formattedDate}</li> {/* التاريخ منسق هنا */}
-//                     <li>Sender: {parcel.senderName}</li>
-//                   </ul>
-//                 </div>
-//                 <div className="d-flex flex-column align-items-center">
-//                   <span>To: {parcel.to}</span>
-//                   <button className={parcel.status === 1 ? "btn btn-dark mt-2" : "btn btn-success mt-2"}>
-//                     {parcel.status === 1 ? "Pending" : "Delivered"}
-//                   </button>
-//                 </div>
-//               </div>
-//             </Link>
-//           );
-//         })}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default MyParcels;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import { useEffect, useState } from 'react';
-// import { FaUser } from 'react-icons/fa';
-// import { Link, useNavigate } from 'react-router-dom';
-// import { useDispatch, useSelector } from "react-redux"
-// import { PuplicRequest } from '../requsetMethod';
-// import { logOut } from '../redux/userRedux';
-
-
-// const MyParcels = () => {
-//   const [open, setOpen] = useState(false);
-//   const [parcels, setParcels] = useState([])
-//   const navigate = useNavigate()
-//   const user = useSelector((state) => state.user)
-//   const dispatch = useDispatch()
-//   const handleOpen = () => {
-//     setOpen(!open);
-//   }
-
-//   useEffect(() => {
-//     const getParcels = async () => {
-//       try {
-//         const res = await PuplicRequest.post("/parcel/me")
-//         email: user.currentUser.email
-
-//         // console.log(res.data.parcels);
-
-//         setParcels(res.data.parcels)
-//       } catch (error) {
-//         // console.log(error);
-
-//       }
-//     }
-
-//     getParcels()
-
-
-//   }, [])
-
-//   console.log(parcels);
-
-//   const Logout = () => {
-//     dispatch(logOut())
-//     navigate("/login")
-//   }
-
-//   return (
-//     <div>
-//       <div className="d-flex justify-content-end align-items-center mt-3 position-relative" style={{ cursor: "pointer" }}>
-//         <div className="text-light" onClick={handleOpen} style={{ fontSize: "18px", fontWeight: "600" }}>
-//           <FaUser className="me-2" /> Mohamed Osama
-//         </div>
-
-//         {open && (
-//           <div
-//             className="position-absolute shadow-lg rounded-3 p-3"
-//             style={{
-//               top: "25px",
-//               right: "0",
-//               width: "250px",
-//               backgroundColor: "#f8f9fa",
-//               zIndex: "999",
-//               boxShadow: "0px 10px 15px rgba(0,0,0,0.1)",
-//             }}
-//           >
-//             <ul className="list-unstyled m-0">
-//               <Link to="/allparcels">
-//                 <li className="my-2 element text-center p-2 rounded" style={{ cursor: "pointer", transition: "background-color 0.3s ease, color 0.3s ease" }}>
-//                   All Parcels
-//                 </li>
-//               </Link>
-//               <li className="my-2 element text-center p-2 rounded" style={{ cursor: "pointer", transition: "background-color 0.3s ease, color 0.3s ease" }}>
-//                 Statement
-//               </li>
-//               <li className="my-2 element text-center p-2 rounded" onClick={Logout} style={{ cursor: "pointer", transition: "background-color 0.3s ease, color 0.3s ease" }}>
-//                 Logout
-//               </li>
-//             </ul>
-//           </div>
-//         )}
-//       </div>
-
-//       <div className="container mt-4">
-//         <h2 className="text-white" style={{ fontSize: "25px", fontWeight: "600" }}>My Parcels</h2>
-
-//         {/* Parcel Item */}
-//         {parcels.map((parcel, index) => {
-//           const formattedDate = new Date(parcel.date).toLocaleDateString("en-GB"); // تنسيق اليوم/شهر/سنة
-
-//           return (
-//             <Link to={`parcel/${parcel._id}`} key={index}>
-
-
-//               <div className="d-flex flex-column flex-md-row justify-content-between bg-light mb-3 p-3 rounded-3 shadow-sm">
-//                 <div className="flex-grow-1">
-//                   <ul>
-//                     <li>From: {parcel.from} </li>
-//                     <li>Weight: {parcel.weight + "g"}</li>
-//                     <li>Date: {formattedDate}</li> {/* التاريخ منسق هنا */}
-//                     <li>Sender: {parcel.senderName}</li>
-//                   </ul>
-//                 </div>
-//                 <div className="d-flex flex-column align-items-center">
-//                   <span>To: {parcel.to} </span>
-//                   <button className={parcel.status === 1 ? "btn btn-dark mt-2" : "btn btn-success mt-2"}>
-//                     {parcel.status === 1 ? "pending " : "Delliverd"}
-//                   </button>
-//                 </div>
-//               </div>
-
-
-//             </Link>
-//           );
-//         })}
-
-//       </div>
-//     </div>
-
-//   )
-// };
-
-
-// export default MyParcels;
