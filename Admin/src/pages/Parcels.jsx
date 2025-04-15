@@ -91,7 +91,6 @@ function Parcels() {
         />
       </div>
 
-      {/* أزرار التنقل للصفحات */}
       <div className="d-flex justify-content-between mt-3">
         <button
           onClick={handlePrevPage}

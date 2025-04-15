@@ -12,14 +12,13 @@ import Login from "./pages/Login.jsx";
 import { useMemo } from "react";
 import User from "./pages/user.jsx";
 
-// مكون لحماية صفحات الأدمن
+
 const ProtectedRoute = ({ children }) => {
   const token = useMemo(() => localStorage.getItem("token"), []);
   if (!token) return <Navigate to="/Login" replace />;
   return children;
 };
 
-// مكون لمنع الدخول إلى صفحة تسجيل الدخول إذا كان المستخدم مسجلاً
 const GuestRoute = ({ children }) => {
   const token = useMemo(() => localStorage.getItem("token"), []);
   if (token) return <Navigate to="/" replace />;

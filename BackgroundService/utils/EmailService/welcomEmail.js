@@ -30,10 +30,8 @@ const sendWelcomeEmail = async () => {
           html: emailContent,
         };
 
-        // إرسال البريد الإلكتروني باستخدام await
         await sendMail(messageOption);
 
-        // تحديث حالة المستخدم بعد الإرسال بنجاح
         await userModel.findByIdAndUpdate(user._id, { $set: { status: 1 } });
 
         console.log(`Email sent successfully to: ${user.email}`);

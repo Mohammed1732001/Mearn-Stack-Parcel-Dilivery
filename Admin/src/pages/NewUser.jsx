@@ -16,13 +16,11 @@ function NewUser() {
 
   const handleAddUser = async () => {
     try {
-      // تأكد من أن جميع البيانات موجودة قبل إرسالها
       if (!inputs.fullName || !inputs.email|| !inputs.Cpassword || !inputs.password || !inputs.age || !inputs.country || !inputs.address) {
         toast.error("Please fill all fields.");
         return;
       }
 
-      // إرسال البيانات إلى الخادم
       const res = await PuplicRequest.post("/auth/signUp", { ...inputs });
       console.log(res);
 
@@ -32,7 +30,6 @@ function NewUser() {
         toast.error("Failed to create user.");
       }
     } catch (error) {
-      // إظهار رسالة خطأ للمستخدم إذا فشل الطلب
       toast.error("Error: " + (error.response?.data?.message || error.message));
       console.error(error);
     }

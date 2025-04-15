@@ -2,7 +2,6 @@ import ejs from "ejs";
 import sendMail from "../EmailService/sendEmail.js";
 import parcelModel from "../../DB/models/parcel.model.js";
 
-// دالة لإرسال البريد الإلكتروني
 const sendParcelEmail = async (parcel, emailAddress, subject, templateName) => {
   try {
     const data = await new Promise((resolve, reject) => {
@@ -38,13 +37,11 @@ const sendParcelEmail = async (parcel, emailAddress, subject, templateName) => {
   }
 };
 
-// دالة رئيسية لإرسال البريد الإلكتروني للطرد الذي تم تسليمه
 const SendParcelDeliveredEmail = async () => {
   const parcels = await parcelModel.find({ status: 2 });
 
   if (parcels.length > 0) {
     for (let parcel of parcels) {
-      // إرسال البريد الإلكتروني إلى المرسل
       await sendParcelEmail(
         parcel,
         parcel.senderEmail,
@@ -52,7 +49,6 @@ const SendParcelDeliveredEmail = async () => {
         "deliveredparcel"
       );
 
-      // إرسال البريد الإلكتروني إلى المستلم
       await sendParcelEmail(
         parcel,
         parcel.recipientEmail,
@@ -60,7 +56,6 @@ const SendParcelDeliveredEmail = async () => {
         "deliveredparcel"
       );
 
-      // تحديث حالة الطرد بعد إرسال البريد الإلكتروني
       await parcelModel.findByIdAndUpdate(parcel._id, { $set: { status: 3 } });
     }
   }

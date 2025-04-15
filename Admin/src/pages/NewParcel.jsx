@@ -6,40 +6,35 @@ function NewParcel() {
   const [inputs, setInputs] = useState({});
   const [loading, setLoading] = useState(false); // لإدارة حالة التحميل
 
-  // دالة للتحقق من صحة البريد الإلكتروني
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  // دالة لتحديث الحقول
   const handleChange = (e) => {
     setInputs((prev) => {
       return { ...prev, [e.target.name]: e.target.value };
     });
   };
 
-  // دالة لإضافة الطرد
   const handleAddParcel = async () => {
-    // التحقق من الحقول الأساسية
     if (!inputs.from || !inputs.to || !inputs.senderName || !inputs.recipientName) {
       toast.error("Please fill in all required fields.");
       return;
     }
 
-    // التحقق من صحة البريد الإلكتروني
     if (!isValidEmail(inputs.senderEmail) || !isValidEmail(inputs.recipientEmail)) {
       toast.error("Please provide valid email addresses.");
       return;
     }
 
-    setLoading(true); // بدء التحميل
+    setLoading(true); 
     try {
       await PuplicRequest.post("/parcel", inputs);
       toast.success("Parcel has been successfully saved to database.");
-      setInputs({}); // تنظيف الحقول بعد الإرسال الناجح
+      setInputs({}); 
     } catch (error) {
       console.log(error);
       toast.error("Failed to add parcel. Please try again.");
     }
-    setLoading(false); // إيقاف التحميل
+    setLoading(false); 
   };
 
   return (

@@ -6,27 +6,25 @@ import { PuplicRequest } from "./requestMethod";
 function Home() {
   const [parcels, setParcels] = useState([]);
   const [users, setUsers] = useState([]);
-  const [topUsers, setTopUsers] = useState([]);  // لتخزين قائمة المستخدمين الذين لديهم أكثر الطرود الموصلة
-  const [loading, setLoading] = useState(true);  // لإدارة حالة التحميل
+  const [topUsers, setTopUsers] = useState([]);  
+  const [loading, setLoading] = useState(true);  
 
-  // تتبع عدد الطرود الموصلة والمعلقة
+ 
   const [deliveredCount, setDeliveredCount] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
 
-  // تتبع عدد المستخدمين
+ 
   const userCount = users.length;
 
-  // تحميل الطرود والمستخدمين
+ 
   useEffect(() => {
     const getData = async () => {
       setLoading(true);  // عند بدء تحميل البيانات
 
       try {
-        // تحميل الطرود والمستخدمين في نفس الـ useEffect
         const parcelRes = await PuplicRequest.get("/parcel");
         const userRes = await PuplicRequest.get("/user");
 
-        // تحديد الطرود الموصلة والمعلقة
         const delivered = parcelRes.data.parcels.filter(parcel => parcel.status === 3 || parcel.status === 2).length;
         const pending = parcelRes.data.parcels.filter(parcel => parcel.status === 1 || parcel.status === 0).length;
 
@@ -43,21 +41,18 @@ function Home() {
           return acc;
         }, {});
         
-        // ترتيب الإيميلات حسب عدد الطرود
         const emailCountArray = Object.entries(emailCounts);
         emailCountArray.sort((a, b) => b[1] - a[1]);
         const emails = emailCountArray.map(item => item[0]);
         
-        // تصفية المستخدمين الذين لديهم أكثر الطرود الموصلة
         const matchedUsers = userRes.data.user.filter(user => emails.includes(user.email));
 
-        // أخذ أفضل 3 مستخدمين
         setTopUsers(matchedUsers.slice(0, 3).map(user => user.fullName));
 
       } catch (error) {
         console.error("Error loading data:", error);
       } finally {
-        setLoading(false);  // إنهاء حالة التحميل
+        setLoading(false);  
       }
     };
 
@@ -66,7 +61,6 @@ function Home() {
 
   return (
     <div>
-      {/* البطاقات */}
       <div className="row mx-auto mt-1 row-cols-1 row-cols-md-3 g-4">
         <Card 
           title="Users" 
@@ -85,7 +79,6 @@ function Home() {
         />
       </div>
 
-      {/* القسم السفلي */}
       <div className="d-flex flex-wrap justify-content-between mt-3 gap-3">
         <div className="shadow-lg rounded" style={{ flex: "1 1 300px", minWidth: "280px", maxWidth: "600px", height: "100%" }}>
           <PieChart
@@ -106,7 +99,7 @@ function Home() {
                 cy: 150,
               }
             ]}
-            style={{ width: '100%', height: '300px' }} // تحديد ارتفاع مناسب
+            style={{ width: '100%', height: '300px' }} 
           />
         </div>
 
@@ -132,7 +125,6 @@ function Home() {
   );
 }
 
-// مكون Card
 const Card = ({ title, value, icon }) => {
   return (
     <div className="col">

@@ -7,7 +7,6 @@ function User() {
     const [user, setUser] = useState({})
     const location = useLocation()
     const userId = location.pathname.split("/")[2]
-//   console.log(user);
   
     const [inputs, setInputs] = useState({})
   

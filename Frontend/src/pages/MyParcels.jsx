@@ -73,7 +73,7 @@ const MyParcels = () => {
     navigate("/login");
   };
 
-  if (!decoded) return null; // ⛔ ما نرندرش الصفحة قبل التحقق
+  if (!decoded) return null; // ما نرندرش الصفحة قبل التحقق
 
   return (
     <div>
