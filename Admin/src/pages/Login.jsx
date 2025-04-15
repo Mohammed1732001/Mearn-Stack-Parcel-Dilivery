@@ -1,85 +1,3 @@
-// import Footer from "../compnante/Footer"
-
-// function Login() {
-//   return (
-//     <div>
-//       <div
-//         className="d-flex justify-content-center justify-content-lg-evenly align-items-center p-3 p-lg-5 flex-column-reverse flex-lg-row"
-//         style={{ minHeight: "90.5vh", color: "gray" }}
-//       >
-//         {/* الجزء الخاص بالصورة والعنوان */}
-//         <div className="text-center text-lg-start mb-4 mb-lg-0">
-//           <h2 className="text-secondary fw-semibold" style={{ fontSize: "35px" }}>SendIT Admin</h2>
-//           <img
-//             src="../../public/hero.png"
-//             alt="Hero"
-//             className="img-fluid"
-//             style={{ maxWidth: "100%" }}
-//           />
-//         </div>
-
-//         {/* صندوق تسجيل الدخول */}
-//         <div
-//           className="w-100"
-//           style={{
-//             maxWidth: "350px",
-//             backgroundColor: "#E9EB77",
-//             borderRadius: "10px",
-//             padding: "30px 20px",
-//           }}
-//         >
-//           <input
-//             type="text"
-//             placeholder="Enter your email"
-//             className="d-block p-2 my-3 w-100 mx-auto"
-//             style={{
-//               borderRadius: "5px",
-//               border: "none",
-//             }}
-//           />
-//           <input
-//             type="password"
-//             placeholder="Enter your password"
-//             className="d-block p-2 my-3 w-100 mx-auto"
-//             style={{
-//               borderRadius: "5px",
-//               border: "none",
-//             }}
-//           />
-//           <div className="d-flex justify-content-center">
-//             <button className="btn btn-dark w-100 p-2 mt-2">Login</button>
-//           </div>
-//         </div>
-//       </div>
-
-//       <Footer />
-//     </div>
-//   )
-// }
-
-// export default Login
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import Footer from "../compnante/Footer";
@@ -92,7 +10,6 @@ function Login() {
 
 
 
-  // ✅ Handle login
   const handleLogin = async () => {
     setErrorMsg(""); // reset any previous errors
 
@@ -121,7 +38,6 @@ function Login() {
       setErrorMsg("الإيميل أو الباسورد غير صحيح.");
     }
   };
-  // ✅ Check token on component mount
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {

@@ -26,10 +26,10 @@ const Navbar = () => {
             transition: "all 0.3s ease-in-out",
           }}
           onMouseOver={(e) => {
-            e.target.style.backgroundColor = "#555"; // تغيير اللون عند التمرير
+            e.target.style.backgroundColor = "#555"; ر
           }}
           onMouseOut={(e) => {
-            e.target.style.backgroundColor = "#333"; // إعادة اللون الأصلي
+            e.target.style.backgroundColor = "#333"; 
           }}
         >
           Logout

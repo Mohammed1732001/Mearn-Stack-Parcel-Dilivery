@@ -10,7 +10,7 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [formError, setFormError] = useState(""); // رسالة خطأ عند فشل التحقق من الإدخال
+  const [formError, setFormError] = useState(""); 
 
   const user = useSelector((state) => state.user);
   const error = useSelector((state) => state.user.error);
@@ -23,7 +23,7 @@ function Login() {
       return;
     }
 
-    setFormError(""); // إزالة الخطأ القديم
+    setFormError(""); 
 
     try {
       setLoading(true);
@@ -39,7 +39,6 @@ function Login() {
     setShowPassword(!showPassword);
   };
 
-  // لو المستخدم سجل الدخول بنجاح، نوجهه على صفحة MyParcels
   if (user.currentUser) {
     return <Navigate to="/Myparcels" />;
   }
@@ -121,10 +120,8 @@ function Login() {
             {loading ? "Loading..." : "Login"}
           </button>
 
-          {/* عرض رسالة الخطأ عند عدم إدخال البيانات */}
           {formError && <span className="text-danger mt-2">{formError}</span>}
 
-          {/* عرض رسالة الخطأ من السيرفر لو البيانات غلط */}
           {error && !formError && (
             <span className="text-danger mt-2">
               Please make sure that you have used correct Email and Password

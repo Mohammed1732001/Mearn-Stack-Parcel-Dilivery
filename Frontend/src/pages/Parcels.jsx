@@ -20,30 +20,27 @@ console.log(decoded);
   useEffect(() => {
     const getParcels = async () => {
       try {
-        // تحقق إذا كان المستخدم موجودًا
         if (!decoded?.email) {
           console.log("User email not found.");
           return;
         }
 
-        // إرسال طلب POST مع الـ email
         const res = await PuplicRequest.post("/parcel/me", {
-          email: decoded.email,  // إرسال الـ email بشكل صحيح هنا
+          email: decoded.email, 
         });
 
-        console.log(res.data.parcels);  // في حال أردت عرض البيانات في الكونسول
+        console.log(res.data.parcels);
 
-        // تحديث الـ state بالبيانات التي تم جلبها
         setParcels(res.data.parcels);
       } catch (error) {
-        console.log(error);  // في حال حدوث خطأ
+        console.log(error);
       }
     };
 
     if (decoded?.email) {
-      getParcels();  // إرسال الطلب فقط إذا كان email موجودًا
+      getParcels(); 
     }
-  }, [user?.currentUser?.email]);  // إعادة التنفيذ عند تغيير المستخدم
+  }, [user?.currentUser?.email]); 
 
   const columns = [
     { field: "_id", headerName: "ID", flex: 0.5 },
@@ -63,7 +60,6 @@ console.log(decoded);
 
         <div className="d-flex flex-column flex-md-row justify-content-between align-items-start mb-3">
           <span style={{ fontSize: "20px", fontWeight: "bold" }}>All Parcels</span>
-          {/* تأكد من أن `user.currentUser` ليس فارغًا */}
           <span style={{ fontWeight: "500" }}>
             {decoded.FullName}
           </span>
@@ -74,7 +70,6 @@ console.log(decoded);
             rows={parcels}
             getRowId={(row) => row._id}
             onRowClick={(params) => {
-              // نقل المستخدم إلى رابط تفاصيل الطرد باستخدام _id
               window.location.href = `Myparcels/parcel/${params.row._id}`;
             }}
             columns={columns}

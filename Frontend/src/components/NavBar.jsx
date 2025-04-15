@@ -6,7 +6,6 @@ function NavBar() {
     <nav className="navbar" style={{ height: "70px", backgroundColor: "#E9EB77" }}>
       <div className="container d-flex flex-wrap justify-content-between align-items-center py-2">
 
-        {/* اللوجو */}
         <div className="d-flex align-items-center">
           <Link to="/">
             <img
@@ -18,7 +17,6 @@ function NavBar() {
           </Link>
         </div>
 
-        {/* زر الدخول */}
         <div className="mt-2 mt-sm-0">
           <Link to="/login">
             <button className="btn btn-dark fw-semibold fs-6 px-4">

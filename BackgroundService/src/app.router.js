@@ -1,18 +1,13 @@
 import conectDB from "../DB/conniction.js"
-
 import corn from "node-cron"
 import sendWelcomeEmail from "../utils/EmailService/welcomEmail.js"
 import sendParcelPandingEmail from "../utils/EmailService/pandingParcel.js"
 import SendParcelDeliveredEmail from "../utils/EmailService/diliverdParcel.js"
 
-
-
-
 const initApp = (express, app) => {
 
     app.use(express.json())
 
-    // task SCheduler
         const run = () => {
         corn.schedule("* * * * * *", async () => {
             sendWelcomeEmail()

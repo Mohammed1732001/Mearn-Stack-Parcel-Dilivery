@@ -11,7 +11,7 @@ import { PuplicRequest } from "../requsetMethod";
 function Parcel() {
   const Location = useLocation();
   const parcelId = Location.pathname.split("/")[3];
-  const [parcel, setParcel] = useState(null); // ✅ parcel as object
+  const [parcel, setParcel] = useState(null);
 
   useEffect(() => {
     const getParcel = async () => {
@@ -28,7 +28,7 @@ function Parcel() {
   const handleSubmit = async () => {
     try {
       const res = await PuplicRequest.put(`/parcel/${parcelId}`, {
-        status: 2, // ✅ Change status to 2
+        status: 2,
       });
       setParcel(res.data.parcel);
       // console.log(res.data.parcel);
@@ -52,7 +52,6 @@ function Parcel() {
         </Link>
 
         <div className="row gy-4">
-          {/* العمود الأيسر */}
           <div className="col-12 col-lg-6">
             <ul className="list-unstyled">
               <li className="fw-bold mb-3">

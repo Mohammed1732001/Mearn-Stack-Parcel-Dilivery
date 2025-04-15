@@ -35,13 +35,11 @@ const sendParcelPandingEmail = async () => {
                     );
                 });
 
-                // تحقق من وجود البريد الإلكتروني المرسل في البيئة
                 if (!process.env.EMAIL) {
                     console.error("Missing email sender address in environment variables.");
                     return;
                 }
 
-                // إرسال البريد الإلكتروني إلى المرسل
                 const senderMessageOption = {
                     from: process.env.EMAIL,
                     to: parcel.senderEmail,
@@ -49,7 +47,6 @@ const sendParcelPandingEmail = async () => {
                     html: data,
                 };
 
-                // إرسال البريد الإلكتروني إلى المستلم
                 const recipientMessageOption = {
                     from: process.env.EMAIL,
                     to: parcel.recipientEmail,
@@ -57,19 +54,15 @@ const sendParcelPandingEmail = async () => {
                     html: data,
                 };
 
-                // تحقق من حالة الطرد قبل تحديثها
                 if (parcel.status !== 0) {
                     console.log(`Parcel ID: ${parcel._id} has already been processed.`);
                     continue;
                 }
 
-                // إرسال البريد الإلكتروني للمرسل
                 await sendMail(senderMessageOption);
 
-                // إرسال البريد الإلكتروني للمستلم
                 await sendMail(recipientMessageOption);
 
-                // تحديث حالة الطرد بعد إرسال البريد الإلكتروني
                 const updatedParcel = await parcelModel.findByIdAndUpdate(parcel._id, { $set: { status: 1 } }, { new: true });
                 if (!updatedParcel) {
                     console.error(`Failed to update status for parcel ID: ${parcel._id}`);

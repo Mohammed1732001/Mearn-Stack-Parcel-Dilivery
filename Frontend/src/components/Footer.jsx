@@ -7,7 +7,6 @@ function Footer() {
   <div className="container">
     <div className="row justify-content-center text-center text-md-start align-items-center">
 
-      {/* القسم الأيسر */}
       <div className="col-12 col-md-6 mb-4 mb-md-0 d-flex flex-column align-items-center align-items-md-start">
         <img src="/logo.png" alt="Logo" className="w-50 mb-3" />
 
@@ -29,7 +28,6 @@ function Footer() {
         </div>
       </div>
 
-      {/* الحقوق */}
       <div className="col-12 col-md-5 text-center text-md-end">
         <p className="mb-1">Design By Dinga Code</p>
         <p className="mb-0">&copy; One Project System</p>

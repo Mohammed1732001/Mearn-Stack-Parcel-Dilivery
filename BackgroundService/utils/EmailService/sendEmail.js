@@ -28,6 +28,3 @@ const sendMail = async (messageoption) => {
 export default sendMail;
 
 
-
-// ashrafkhalil141@gmail.com
-// mayarelsawaf55@gmail.com
